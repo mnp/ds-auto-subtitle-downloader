@@ -1,0 +1,90 @@
+#! /usr/bin/env node
+
+//
+// Find all video files recursively and download an srt for them
+//
+
+// search for video files below this point
+var root = "/volume1/video"
+
+var fs        = require('fs')
+var domain    = require('domain')
+var path      = require('path')
+var subdb     = require('/volume1/@appstore/Node.js/usr/lib/node_modules/subdb-cli/lib/subdb-cli.js')
+//var recursive = require('/root/readdirr.js');
+
+//
+// thanks to https://gist.github.com/simov/4132717
+//
+var dir = null, file = null;
+
+function readdirr (dpath, cb) {
+    dir = [], file = [];
+    dir.push(dpath);
+    function loop (i) {
+        if (i == dir.length) return cb(null, dir, file);
+        fs.readdir(dir[i], function (err, files) {
+            if (err) return cb(err);
+            getstat(dir[i], files, function (err) {
+                if (err) return cb(err);
+                loop(++i);
+            });
+        });
+    }
+    loop(0);
+}
+
+// my version skips symbolic links
+
+function getstat (dpath, files, cb) {
+    function loop (i) {
+        if (i == files.length) return cb();
+        var fpath = path.join(dpath, files[i]);
+        fs.lstat(fpath, function (err, stats) {
+            if (err) return cb(err);
+            if (!stats.isSymbolicLink()) {
+		if (stats.isDirectory()) {
+                    dir.push(fpath);
+		} else {
+                    file.push(fpath);
+		}
+	    }
+            loop(++i);
+        });
+    }
+    loop(0);
+}
+
+// callback to readdirr, which will fire at every directory
+
+var cb = function (err, dir, files) {
+    for (i in files) {
+	var file=files[i]
+	var ext
+
+	if ((extpos = file.search(/\.(avi|mp4)$/)) > -1) {
+	    var body = file.substr(0, extpos);
+	    console.log("considering " + files[i])
+
+	    var subfile = body + ".srt"
+	    if (fs.existsSync(subfile)) { 
+		console.log("skipping subfile");
+	    }
+	    else {
+		console.log("fetching " + file)
+		d = domain.create();
+		d.on('error', function(err) {
+		  console.error(err);
+		  });	
+		subdb.download(file, "en")
+	    }
+	}
+    }
+
+    if (err) {
+        console.log(err);
+    }
+};
+
+readdirr(root, cb);
+

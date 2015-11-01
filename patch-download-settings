@@ -1,0 +1,17 @@
+#!/bin/sh
+
+victim=/usr/syno/etc/packages/DownloadStation/download/settings.json
+updater=/usr/local/bin/update-subs
+
+if [ ! -f $victim ]; then
+  echo $victim not found
+  exit 1
+fi
+ 
+set -e
+cp $victim $victim.bak 
+sed -i 's!"script-torrent-done-enabled": false,!"script-torrent-done-enabled": true,!' $victim
+sed -i "s!\"script-torrent-done-filename\": \"\",!\"script-torrent-done-filename\": \"$updater\",!" $victim
+
+echo done
+exit 0

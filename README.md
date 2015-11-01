@@ -42,10 +42,11 @@ YourDS> /usr/local/bin/patch-download-settings
 56	1	*	*	1,2,3,4,6	root	/usr/syno/bin/synopkg chkupgradepkg
 ```
 
-which means every Mon, Tue, Wed, and Sat at 01:56 AM, check for upgrade. We will re-run our settings patcher an hour later.
+which means every Mon, Tue, Wed, and Sat at 01:56 AM, check for upgrade. We will re-run our settings patcher an hour later. You can do the edit from the command line.
 
 ```
-56	2	*	*	1,2,3,4,6	root	/usr/local/bin/patch-download-settings
+YourDS> cp /etc/crontab /etc/crontab.bak
+YourDS> echo '56	2	*	*	1,2,3,4,6	root	/usr/local/bin/patch-download-settings' >> /etc/crontab
 ```
 
 ## Bugs

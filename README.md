@@ -1,8 +1,8 @@
 ## What and Why
 
 This small bit of duct tape allows a Synology Diskstation to
-automatically download subtitle **.srt** files after the Downloader
-application runs. The Video Player app can web search for subtitles
+automatically download subtitle **.srt** files after the Download
+Station app runs. The Video Player app can web search for subtitles
 but it's an extra clicky step and it's not very reliable.
 
 ## How
@@ -16,12 +16,12 @@ https://github.com/arshad/subdb-cli, which is much better at finding
 subtitles, and a mangled piece of
 https://gist.github.com/simov/4132717 to recurse.  We also use a cron
 job to re-install ourselves after the DS overwrites the hook we put
-in, every time it upgrades the download app.
+in, every time it upgrades the Download Station app.
 
 ## Installation
 
 1. On the DS control panel, turn on the SSH server if you haven't already.
-2. On the DS app store panel, install the **node.js** and **Downloader** apps.
+2. On the DS app store panel, install the **node.js** and **Download Station** apps.
 3. Copy the **update-subs** and **patch-download-settings** to your DS to the root folder.  How you do this is probably specific to your setup.
 4. Open a console and SSH into your DS.
 5. Install a dependency for Node:
@@ -29,7 +29,7 @@ in, every time it upgrades the download app.
 YourDS> npm install -g subdb-cli
 ```
 6. Install the project files where they belong, then patch our hooks into the
-   downloader settings file.
+   Download Station app settings file.
 ```
 YourDS> chmod a+x update-subs patch-download-settings
 YourDS> mv patch-download-settings update-subs /usr/local/bin
